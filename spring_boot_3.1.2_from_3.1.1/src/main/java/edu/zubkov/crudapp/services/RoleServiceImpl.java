@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -37,8 +36,8 @@ public class RoleServiceImpl implements RoleService {
         String[] arrayOfRoles = roles.split(",");
         Set<Role> userRoles = new HashSet<>();
 
-        for (String nameOfRole: arrayOfRoles) {
-            for (Role role: setOfRoles) {
+        for (String nameOfRole : arrayOfRoles) {
+            for (Role role : setOfRoles) {
                 if (role.getName().equals(nameOfRole))
                     userRoles.add(roleDAO.roleByName(nameOfRole));
             }

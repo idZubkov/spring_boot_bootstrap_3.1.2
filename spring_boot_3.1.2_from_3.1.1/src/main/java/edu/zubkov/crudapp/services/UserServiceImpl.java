@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,14 +42,11 @@ public class UserServiceImpl implements UserService {
         user.setSurname(userDto.getSurname());
         user.setProfession(userDto.getProfession());
         user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
-        Role role = roleDAO.roleByName(userDto.getAuthorities());
-        Set<Role> roleSet = new HashSet<>();
-        roleSet.add(role);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        Set<Role> roleSet = roleService.mapRoleNamesToRoles(userDto.getRoles());
         user.setRoles(roleSet);
         userDAO.add(user);
     }
-
 
     @Override
     @Transactional
@@ -61,20 +57,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void update(UserDto userDto, long id) {
+        Set<Role> roleSet = roleService.mapRoleNamesToRoles(userDto.getRoles());
         User userById = userDAO.getById(id);
         userById.setName(userDto.getName());
         userById.setSurname(userDto.getSurname());
         userById.setProfession(userDto.getProfession());
         userById.setUsername(userDto.getUsername());
         userById.setPassword(userDto.getPassword());
-
-        Set<Role> roleSet = roleService.mapRoleNamesToRoles(userDto.getRoles());
-
-//        Set<Role> roleSet = new HashSet<>();
         userById.setRoles(roleSet);
-//        Role role = roleDAO.roleByName(userDto.getAuthorities());
-//        roleSet.add(role);
-//        userById.setRoles(roleSet);
         userDAO.update(userById);
     }
 

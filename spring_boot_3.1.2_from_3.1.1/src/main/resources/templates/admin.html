@@ -138,11 +138,13 @@
                                                                name="password" th:value="${user.password}">
 
                                                         <label for="editRole">Role</label>
-                                                        <select multiple class="form-select w-100" size="2" id="editRole"
-                                                                name="authorities">
+                                                        <select multiple class="form-select w-100" size="2"
+                                                                id="editRole"
+                                                                name="roles">
                                                             <option th:each="role : ${rolez}"
-                                                                    th:value="${role}"
-                                                                    th:text="${role}">
+                                                                    th:text="${role}"
+                                                                    th:selected="${role.name.equals('ROLE_USER')}"
+                                                                    th:value="${role}">
                                                             </option>
                                                         </select>
                                                         <div class="modal-footer">
@@ -213,7 +215,7 @@
 
                                                         <label for="delRole">Role</label>
                                                         <select class="form-select w-100" size="2" id="delRole"
-                                                                name="authorities" disabled>
+                                                                name="roles" disabled>
                                                             <option th:each="role : ${user.roles}"
                                                                     th:text="${role.name}">
                                                             </option>
@@ -267,9 +269,10 @@
                                        placeholder="Password" th:field="*{password}">
 
                                 <label for="role">Role</label>
-                                <select multiple class="form-select w-100" size="2" id="role" name="authorities">
+                                <select multiple class="form-select w-100" size="2" id="role" name="roles">
                                     <option th:each="role : ${rolez}"
                                             th:text="${role.name}"
+                                            th:selected="${role.name.equals('ROLE_USER')}"
                                             th:value="${role.name}">
                                     </option>
                                 </select>

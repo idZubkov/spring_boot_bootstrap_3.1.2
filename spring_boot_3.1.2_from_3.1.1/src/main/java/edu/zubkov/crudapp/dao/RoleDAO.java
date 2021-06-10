@@ -12,5 +12,5 @@ public interface RoleDAO {
 
     Set<Role> setOfRoles(String roles);
 
-    Role  roleByName(String nameOfRole);
+    Role roleByName(String nameOfRole);
 }
