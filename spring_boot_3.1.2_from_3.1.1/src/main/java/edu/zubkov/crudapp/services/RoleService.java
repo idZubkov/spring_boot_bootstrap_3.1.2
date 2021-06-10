@@ -12,4 +12,8 @@ public interface RoleService {
     Role roleById(long id);
 
     Set<Role> getAllRoles(String roles);
+
+    Set<Role> mapRoleNamesToRoles(List<String> roles);
+
+    public Role roleByName(String roleName);
 }

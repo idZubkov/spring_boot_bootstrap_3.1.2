@@ -4,15 +4,17 @@ import edu.zubkov.crudapp.models.Role;
 import edu.zubkov.crudapp.models.User;
 import edu.zubkov.crudapp.services.RoleService;
 import edu.zubkov.crudapp.services.UserService;
+import edu.zubkov.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
@@ -39,22 +41,14 @@ public class AdminController {
     }
 
     @PostMapping("/edit/{id}")
-    public String editUser(@Validated(User.class) @ModelAttribute("user") User user,
-                           @RequestParam(value = "authorities", required = false) String roles,
-                           @PathVariable("id") long id) {
-
-        Set<Role> roleSet = roleService.getAllRoles(roles);
-        user.setRoles(roleSet);;
-        userService.update(user, id);
+    public String editUser(UserDto userDto, @PathVariable("id") long id) {
+        userService.update(userDto, id);
         return "redirect:/admin";
     }
 
     @PostMapping("/createNewUser")
-    public String create(@Validated(User.class) @ModelAttribute("user") User user,
-                         @RequestParam("authorities") String roles) {
-        Set<Role> setOfRoles = roleService.getAllRoles(roles);
-        user.setRoles(setOfRoles);
-        userService.add(user);
+    public String create(UserDto userDto) {
+        userService.add(userDto);
         return "redirect:/admin";
     }
 

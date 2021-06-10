@@ -138,7 +138,7 @@
                                                                name="password" th:value="${user.password}">
 
                                                         <label for="editRole">Role</label>
-                                                        <select class="form-select w-100" size="2" id="editRole"
+                                                        <select multiple class="form-select w-100" size="2" id="editRole"
                                                                 name="authorities">
                                                             <option th:each="role : ${rolez}"
                                                                     th:value="${role}"
@@ -267,7 +267,7 @@
                                        placeholder="Password" th:field="*{password}">
 
                                 <label for="role">Role</label>
-                                <select class="form-select w-100" size="2" id="role" name="authorities">
+                                <select multiple class="form-select w-100" size="2" id="role" name="authorities">
                                     <option th:each="role : ${rolez}"
                                             th:text="${role.name}"
                                             th:value="${role.name}">

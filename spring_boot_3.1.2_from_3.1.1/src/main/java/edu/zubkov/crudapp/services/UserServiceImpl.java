@@ -4,6 +4,7 @@ import edu.zubkov.crudapp.dao.RoleDAO;
 import edu.zubkov.crudapp.dao.UserDAO;
 import edu.zubkov.crudapp.models.Role;
 import edu.zubkov.crudapp.models.User;
+import edu.zubkov.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,34 +25,30 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final RoleService roleService;
+
     @Autowired
-    public UserServiceImpl(UserDAO userDAO, RoleDAO roleDAO, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDAO userDAO, RoleDAO roleDAO, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userDAO = userDAO;
         this.roleDAO = roleDAO;
         this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
     }
 
     @Override
     @Transactional
-    public void add(User user) {
-        User newUser = new User();
-        newUser.setName(user.getName());
-        newUser.setSurname(user.getSurname());
-        newUser.setProfession(user.getProfession());
-        newUser.setUsername(user.getUsername());
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        Set<Role> rolesForUser = new HashSet<>();
-        Set<Role> rolesForUser2 = new HashSet<>();
-        rolesForUser.add(roleDAO.roleByName("ROLE_ADMIN"));
-        rolesForUser.add(roleDAO.roleByName("ROLE_USER"));
-        rolesForUser2.add(roleDAO.roleByName("ROLE_USER"));
-        for (Role role : user.getRoles()) {
-            if (role.getName().equals("ROLE_ADMIN")) {
-                newUser.setRoles(rolesForUser);
-            } else
-                newUser.setRoles(rolesForUser2);
-        }
-        userDAO.add(newUser);
+    public void add(UserDto userDto) {
+        User user = new User();
+        user.setName(userDto.getName());
+        user.setSurname(userDto.getSurname());
+        user.setProfession(userDto.getProfession());
+        user.setUsername(userDto.getUsername());
+        user.setPassword(userDto.getPassword());
+        Role role = roleDAO.roleByName(userDto.getAuthorities());
+        Set<Role> roleSet = new HashSet<>();
+        roleSet.add(role);
+        user.setRoles(roleSet);
+        userDAO.add(user);
     }
 
 
@@ -63,25 +60,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void update(User user, long id) {
-        User userToUpdate = getById(id);
-        userToUpdate.setName(user.getName());
-        userToUpdate.setSurname(user.getSurname());
-        userToUpdate.setProfession(user.getProfession());
-        userToUpdate.setPassword(user.getPassword());
-        Set<Role> rolesForUser = new HashSet<>();
-        Set<Role> rolesForUser2 = new HashSet<>();
-        rolesForUser.add(roleDAO.roleByName("ROLE_ADMIN"));
-        rolesForUser.add(roleDAO.roleByName("ROLE_USER"));
+    public void update(UserDto userDto, long id) {
+        User userById = userDAO.getById(id);
+        userById.setName(userDto.getName());
+        userById.setSurname(userDto.getSurname());
+        userById.setProfession(userDto.getProfession());
+        userById.setUsername(userDto.getUsername());
+        userById.setPassword(userDto.getPassword());
 
-        rolesForUser2.add(roleDAO.roleByName("ROLE_USER"));
-        for (Role role : user.getRoles()) {
-            if (role.getName().equals("ROLE_ADMIN")) {
-                user.setRoles(rolesForUser);
-            } else
-                user.setRoles(rolesForUser2);
-            userDAO.update(user);
-        }
+        Set<Role> roleSet = roleService.mapRoleNamesToRoles(userDto.getRoles());
+
+//        Set<Role> roleSet = new HashSet<>();
+        userById.setRoles(roleSet);
+//        Role role = roleDAO.roleByName(userDto.getAuthorities());
+//        roleSet.add(role);
+//        userById.setRoles(roleSet);
+        userDAO.update(userById);
     }
 
     @Override
